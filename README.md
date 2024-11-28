@@ -1,4 +1,4 @@
-# Screen Sharing App
+# Screen Sharing Application
 
 A real-time screen sharing application built with Next.js, WebRTC, and Socket.IO. Create or join rooms to share your screen with others instantly.
 
