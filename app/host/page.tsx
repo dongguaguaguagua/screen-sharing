@@ -6,12 +6,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Copy, Monitor, Users } from "lucide-react";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 export default function HostPage() {
     const [roomId, setRoomId] = useState<string>("");
     const [peer, setPeer] = useState<Peer | null>(null);
     const [viewers, setViewers] = useState<number>(0);
     const { toast } = useToast();
+    const router = useRouter();
 
     useEffect(() => {
         const newPeer = new Peer();
@@ -75,6 +78,11 @@ export default function HostPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
             <div className="max-w-2xl mx-auto space-y-8">
+                <Button variant="outline" onClick={() => router.push("/")} className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Home
+                </Button>
+
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">

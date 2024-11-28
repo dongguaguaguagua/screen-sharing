@@ -7,8 +7,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Maximize2, Minimize2, Users } from "lucide-react";
 import Peer from "peerjs";
 import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react"; // Import ArrowLeft icon
 
 export default function JoinPage() {
+    const router = useRouter();
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -124,6 +127,11 @@ export default function JoinPage() {
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
             <div className="max-w-2xl mx-auto space-y-8">
+                <Button variant="outline" onClick={() => router.push("/")} className="flex items-center gap-2">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Home
+                </Button>
+
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
