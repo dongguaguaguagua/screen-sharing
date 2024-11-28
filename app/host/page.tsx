@@ -27,24 +27,34 @@ export default function HostPage() {
                 setViewers((prev) => prev - 1);
             });
 
-            // Start screen sharing when someone connects
-            navigator.mediaDevices
-                .getDisplayMedia({ video: true })
-                .then((stream) => {
-                    const call = newPeer.call(conn.peer, stream);
+            // Show toast with button to start sharing
+            toast({
+                title: "New viewer connected",
+                description: "Click to start sharing your screen",
+                action: (
+                    <Button
+                        onClick={async () => {
+                            try {
+                                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                                const call = newPeer.call(conn.peer, stream);
 
-                    stream.getVideoTracks()[0].onended = () => {
-                        call.close();
-                        stream.getTracks().forEach((track) => track.stop());
-                    };
-                })
-                .catch((err) => {
-                    toast({
-                        title: "Screen sharing error",
-                        description: "Failed to start screen sharing. Please try again.",
-                        variant: "destructive"
-                    });
-                });
+                                stream.getVideoTracks()[0].onended = () => {
+                                    call.close();
+                                    stream.getTracks().forEach((track) => track.stop());
+                                };
+                            } catch (err) {
+                                console.error("Screen sharing error:", err);
+                                toast({
+                                    title: "Screen sharing error",
+                                    description: "Failed to start screen sharing. Please try again.",
+                                    variant: "destructive"
+                                });
+                            }
+                        }}>
+                        Start Sharing
+                    </Button>
+                )
+            });
         });
 
         setPeer(newPeer);
