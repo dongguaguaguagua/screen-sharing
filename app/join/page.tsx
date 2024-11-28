@@ -4,24 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Users } from "lucide-react";
+import { Maximize2, Minimize2, Users } from "lucide-react";
 import Peer from "peerjs";
-import { useEffect, useRef, useState } from "react";
-import { VideoPlayer } from "../components/video-player";
+import { useRef, useState, useEffect } from "react";
 
 export default function JoinPage() {
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
-    const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-    const [isRoomOwner] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
-    const peerConnection = useRef<RTCPeerConnection | null>(null);
     const { toast } = useToast();
-    const [volume, setVolume] = useState(1);
-    const [isMuted, setIsMuted] = useState(false);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -100,30 +94,9 @@ export default function JoinPage() {
             peer.on("call", (call) => {
                 call.answer();
                 call.on("stream", (remoteStream) => {
-                    console.log("Received stream from host", {
-                        audioTracks: remoteStream.getAudioTracks().length,
-                        videoTracks: remoteStream.getVideoTracks().length
-                    });
-
                     if (videoRef.current) {
                         videoRef.current.srcObject = remoteStream;
-                        videoRef.current.volume = volume;
-                        videoRef.current.muted = isMuted;
-
-                        videoRef.current.autoplay = true;
-                        videoRef.current.playsInline = true;
-
-                        const playPromise = videoRef.current.play();
-                        if (playPromise) {
-                            playPromise.catch((error) => {
-                                console.error("Error playing video:", error);
-                                toast({
-                                    title: "Audio Playback",
-                                    description: "Click anywhere to enable audio playback",
-                                    variant: "destructive"
-                                });
-                            });
-                        }
+                        videoRef.current.play().catch(console.error);
                     }
                 });
             });
@@ -139,7 +112,6 @@ export default function JoinPage() {
         });
 
         peer.on("error", (err) => {
-            console.error("Peer connection error:", err);
             setIsConnecting(false);
             toast({
                 title: "Connection failed",
@@ -148,101 +120,6 @@ export default function JoinPage() {
             });
         });
     };
-
-    const stopScreenShare = () => {
-        if (localStream) {
-            localStream.getTracks().forEach((track) => track.stop());
-            setLocalStream(null);
-            if (videoRef.current) {
-                videoRef.current.srcObject = null;
-            }
-        }
-    };
-
-    const startScreenShare = async () => {
-        try {
-            const stream = await navigator.mediaDevices.getDisplayMedia({
-                video: true,
-                audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    sampleRate: 44100,
-                    autoGainControl: false
-                }
-            });
-
-            const tracks = [...stream.getTracks()];
-            if (stream.getAudioTracks().length === 0) {
-                try {
-                    const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    tracks.push(...audioStream.getAudioTracks());
-                    stream.addTrack(audioStream.getAudioTracks()[0]);
-                } catch (err) {
-                    console.error("Could not get audio stream:", err);
-                }
-            }
-
-            setLocalStream(stream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = stream;
-                videoRef.current.muted = true;
-            }
-
-            stream.getTracks()[0].onended = () => {
-                stopScreenShare();
-            };
-
-            if (isRoomOwner) {
-                const peer = new Peer();
-
-                peer.on("open", (id) => {
-                    setRoomId(id);
-                    toast({
-                        title: "Room Created",
-                        description: `Share this code with others: ${id}`
-                    });
-                });
-
-                peer.on("connection", (conn) => {
-                    conn.on("open", () => {
-                        const call = peer.call(conn.peer, stream);
-
-                        console.log("Sending stream to peer", {
-                            audioTracks: stream.getAudioTracks().length,
-                            videoTracks: stream.getVideoTracks().length
-                        });
-                    });
-                });
-            }
-        } catch (err) {
-            console.error("Error sharing screen:", err);
-            toast({
-                title: "Sharing Error",
-                description: "Could not start screen sharing",
-                variant: "destructive"
-            });
-        }
-    };
-
-    const handleVolumeChange = (newVolume: number) => {
-        setVolume(newVolume);
-        if (videoRef.current) {
-            videoRef.current.volume = newVolume;
-        }
-    };
-
-    const handleToggleMute = () => {
-        setIsMuted(!isMuted);
-        if (videoRef.current) {
-            videoRef.current.muted = !isMuted;
-        }
-    };
-
-    useEffect(() => {
-        return () => {
-            stopScreenShare();
-        };
-    }, []);
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
@@ -264,8 +141,13 @@ export default function JoinPage() {
                                 </Button>
                             </div>
                         ) : (
-                            <div className="space-y-4" ref={videoContainerRef}>
-                                <VideoPlayer videoRef={videoRef} isFullscreen={isFullscreen} onToggleFullscreen={toggleFullscreen} volume={volume} isMuted={isMuted} onVolumeChange={handleVolumeChange} onToggleMute={handleToggleMute} />
+                            <div className="space-y-4">
+                                <div ref={videoContainerRef} className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group">
+                                    <video ref={videoRef} className="w-full h-full object-contain" autoPlay playsInline />
+                                    <Button variant="secondary" size="icon" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" onClick={toggleFullscreen}>
+                                        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                                    </Button>
+                                </div>
                             </div>
                         )}
                     </CardContent>
