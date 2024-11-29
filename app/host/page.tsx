@@ -99,6 +99,8 @@ export default function HostPage() {
             title: "Session ended",
             description: "Your screen sharing session has been terminated."
         });
+
+        router.push("/");
     };
 
     return (
