@@ -1,3 +1,4 @@
+import { Clarity } from "@/components/Clarity";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={inter.className}>
                 {children}
                 <Analytics />
+                <Clarity />
                 <Toaster />
             </body>
         </html>
