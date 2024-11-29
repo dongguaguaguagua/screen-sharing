@@ -7,8 +7,12 @@ A real-time screen sharing application built with Next.js, WebRTC, and PeerJS. C
 -   Real-time screen sharing
 -   Room-based sharing system
 -   Cross-browser support
--   Fullscreen mode
 -   Simple and intuitive interface
+
+## 📱 Device Support
+
+-   **Hosting**: Desktop/laptop browsers only
+-   **Viewing**: Works on all devices (desktop, tablet, mobile)
 
 ## 🛠️ Built With
 
