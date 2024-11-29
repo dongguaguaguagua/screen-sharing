@@ -104,6 +104,7 @@ export default function JoinPage() {
             });
 
             conn.on("close", () => {
+                setIsConnecting(false);
                 setIsConnected(false);
                 toast({
                     title: "Disconnected",
