@@ -1,6 +1,6 @@
 # Screen Sharing Application
 
-A real-time screen sharing application built with Next.js, WebRTC, and Socket.IO. Create or join rooms to share your screen with others instantly.
+A real-time screen sharing application built with Next.js, WebRTC, and PeerJS. Create or join rooms to share your screen with others instantly.
 
 ## 🚀 Features
 
@@ -13,8 +13,7 @@ A real-time screen sharing application built with Next.js, WebRTC, and Socket.IO
 ## 🛠️ Built With
 
 -   [Next.js](https://nextjs.org/) - React framework
--   [Socket.IO](https://socket.io/) - Real-time communication
--   [WebRTC](https://webrtc.org/) - Peer-to-peer connections
+-   [PeerJS](https://peerjs.com/) - WebRTC abstraction
 -   [Tailwind CSS](https://tailwindcss.com/) - Styling
 -   [shadcn/ui](https://ui.shadcn.com/) - UI components
 
