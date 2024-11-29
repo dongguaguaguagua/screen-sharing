@@ -21,7 +21,6 @@ export default function HostPage() {
         async function initializePeer() {
             try {
                 const turnCredentials = await getTurnCredentials();
-                console.log("initializePeer --- turnCredentials", turnCredentials);
 
                 if (!turnCredentials) {
                     console.error("Failed to get TURN credentials");
