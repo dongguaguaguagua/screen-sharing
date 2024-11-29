@@ -3,11 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Copy, Monitor, Users } from "lucide-react";
+import { ArrowLeft, Copy, Monitor, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 
 export default function HostPage() {
     const [roomId, setRoomId] = useState<string>("");
@@ -38,7 +37,9 @@ export default function HostPage() {
                     <Button
                         onClick={async () => {
                             try {
-                                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                                const stream = await navigator.mediaDevices.getDisplayMedia({
+                                    video: true
+                                });
                                 const call = newPeer.call(conn.peer, stream);
 
                                 stream.getVideoTracks()[0].onended = () => {
