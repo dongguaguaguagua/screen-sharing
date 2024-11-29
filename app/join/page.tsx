@@ -8,6 +8,7 @@ import { ArrowLeft, Maximize2, Minimize2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
+import { getTurnCredentials } from "../utils/getTurnCredentials";
 
 export default function JoinPage() {
     const router = useRouter();
@@ -69,7 +70,7 @@ export default function JoinPage() {
         }
     };
 
-    const joinRoom = () => {
+    const joinRoom = async () => {
         if (!roomId.trim()) {
             toast({
                 title: "Room code required",
@@ -80,9 +81,12 @@ export default function JoinPage() {
         }
 
         setIsConnecting(true);
+        const turnCredentials = await getTurnCredentials();
         const peer = new Peer({
+            debug: 3,
             config: {
-                iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" }]
+                iceServers: turnCredentials,
+                iceCandidatePoolSize: 10
             }
         });
 
