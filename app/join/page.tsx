@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Maximize2, Minimize2, Users } from "lucide-react";
-import Peer from "peerjs";
-import { useRef, useState, useEffect } from "react";
+import { ArrowLeft, Maximize2, Minimize2, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react"; // Import ArrowLeft icon
+import Peer from "peerjs";
+import { useEffect, useRef, useState } from "react";
 
 export default function JoinPage() {
     const router = useRouter();
