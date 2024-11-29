@@ -12,6 +12,7 @@ export default function HostPage() {
     const [roomId, setRoomId] = useState<string>("");
     const [peer, setPeer] = useState<Peer | null>(null);
     const [viewers, setViewers] = useState<number>(0);
+    const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
     const { toast } = useToast();
     const router = useRouter();
 
@@ -40,6 +41,7 @@ export default function HostPage() {
                                 const stream = await navigator.mediaDevices.getDisplayMedia({
                                     video: true
                                 });
+                                setActiveStream(stream);
                                 const call = newPeer.call(conn.peer, stream);
 
                                 stream.getVideoTracks()[0].onended = () => {
@@ -76,6 +78,29 @@ export default function HostPage() {
         });
     };
 
+    const endSession = () => {
+        // Stop screen sharing if active
+        if (activeStream) {
+            activeStream.getTracks().forEach((track) => track.stop());
+            setActiveStream(null);
+        }
+
+        // Close peer connection
+        if (peer) {
+            peer.destroy();
+            setPeer(null);
+        }
+
+        // Reset states
+        setViewers(0);
+        setRoomId("");
+
+        toast({
+            title: "Session ended",
+            description: "Your screen sharing session has been terminated."
+        });
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
             <div className="max-w-2xl mx-auto space-y-8">
@@ -107,6 +132,14 @@ export default function HostPage() {
                             </div>
                             <span className="text-lg font-semibold">{viewers}</span>
                         </div>
+
+                        {activeStream && (
+                            <div className="flex justify-end pt-4">
+                                <Button variant="destructive" onClick={endSession} className="flex items-center gap-2">
+                                    Stop sharing
+                                </Button>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>
