@@ -7,7 +7,6 @@ import { ArrowLeft, Copy, Monitor, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
-import { getTurnCredentials } from "../utils/getTurnCredentials";
 
 export default function HostPage() {
     const [roomId, setRoomId] = useState<string>("");
@@ -18,78 +17,61 @@ export default function HostPage() {
     const router = useRouter();
 
     useEffect(() => {
-        async function initializePeer() {
-            try {
-                const turnCredentials = await getTurnCredentials();
+        try {
+            const newPeer = new Peer();
 
-                if (!turnCredentials) {
-                    console.error("Failed to get TURN credentials");
-                    return;
-                }
+            setPeer(newPeer);
 
-                const newPeer = new Peer(roomId, {
-                    debug: 3,
-                    config: {
-                        iceServers: turnCredentials,
-                        iceCandidatePoolSize: 10
-                    }
+            newPeer.on("open", (id) => {
+                setRoomId(id);
+            });
+
+            newPeer.on("connection", (conn) => {
+                setViewers((prev) => prev + 1);
+
+                conn.on("close", () => {
+                    setViewers((prev) => prev - 1);
                 });
 
-                setPeer(newPeer);
+                toast({
+                    title: "New viewer connected",
+                    description: "Click to start sharing your screen",
+                    action: (
+                        <Button
+                            onClick={async () => {
+                                try {
+                                    const stream = await navigator.mediaDevices.getDisplayMedia({
+                                        video: true
+                                    });
+                                    setActiveStream(stream);
+                                    const call = newPeer.call(conn.peer, stream);
 
-                newPeer.on("open", (id) => {
-                    setRoomId(id);
+                                    stream.getVideoTracks()[0].onended = () => {
+                                        call.close();
+                                        stream.getTracks().forEach((track) => track.stop());
+                                    };
+                                } catch (err) {
+                                    console.error("Screen sharing error:", err);
+                                    toast({
+                                        title: "Screen sharing error",
+                                        description: "Failed to start screen sharing. Please try again.",
+                                        variant: "destructive"
+                                    });
+                                }
+                            }}>
+                            Start Sharing
+                        </Button>
+                    )
                 });
+            });
 
-                newPeer.on("connection", (conn) => {
-                    setViewers((prev) => prev + 1);
-
-                    conn.on("close", () => {
-                        setViewers((prev) => prev - 1);
-                    });
-
-                    toast({
-                        title: "New viewer connected",
-                        description: "Click to start sharing your screen",
-                        action: (
-                            <Button
-                                onClick={async () => {
-                                    try {
-                                        const stream = await navigator.mediaDevices.getDisplayMedia({
-                                            video: true
-                                        });
-                                        setActiveStream(stream);
-                                        const call = newPeer.call(conn.peer, stream);
-
-                                        stream.getVideoTracks()[0].onended = () => {
-                                            call.close();
-                                            stream.getTracks().forEach((track) => track.stop());
-                                        };
-                                    } catch (err) {
-                                        console.error("Screen sharing error:", err);
-                                        toast({
-                                            title: "Screen sharing error",
-                                            description: "Failed to start screen sharing. Please try again.",
-                                            variant: "destructive"
-                                        });
-                                    }
-                                }}>
-                                Start Sharing
-                            </Button>
-                        )
-                    });
-                });
-
-                return () => {
-                    newPeer.destroy();
-                };
-            } catch (error) {
-                console.error("Error initializing peer:", error);
-            }
+            return () => {
+                newPeer.destroy();
+            };
+        } catch (error) {
+            console.error("Error initializing peer:", error);
         }
-
-        initializePeer();
-    }, [roomId]);
+    }, []);
 
     const copyRoomId = () => {
         navigator.clipboard.writeText(roomId);
