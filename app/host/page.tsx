@@ -17,7 +17,11 @@ export default function HostPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const newPeer = new Peer();
+        const newPeer = new Peer(roomId, {
+            config: {
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" }]
+            }
+        });
 
         newPeer.on("open", (id) => {
             setRoomId(id);

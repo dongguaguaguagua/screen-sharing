@@ -80,7 +80,11 @@ export default function JoinPage() {
         }
 
         setIsConnecting(true);
-        const peer = new Peer();
+        const peer = new Peer({
+            config: {
+                iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }, { urls: "stun:stun2.l.google.com:19302" }]
+            }
+        });
 
         peer.on("open", () => {
             const conn = peer.connect(roomId);
