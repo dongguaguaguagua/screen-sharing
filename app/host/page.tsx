@@ -21,6 +21,8 @@ export default function HostPage() {
         async function initializePeer() {
             try {
                 const turnCredentials = await getTurnCredentials();
+                console.log("initializePeer --- turnCredentials", turnCredentials);
+
                 if (!turnCredentials) {
                     console.error("Failed to get TURN credentials");
                     return;
@@ -47,7 +49,6 @@ export default function HostPage() {
                         setViewers((prev) => prev - 1);
                     });
 
-                    // Show toast with button to start sharing
                     toast({
                         title: "New viewer connected",
                         description: "Click to start sharing your screen",
@@ -100,19 +101,16 @@ export default function HostPage() {
     };
 
     const endSession = () => {
-        // Stop screen sharing if active
         if (activeStream) {
             activeStream.getTracks().forEach((track) => track.stop());
             setActiveStream(null);
         }
 
-        // Close peer connection
         if (peer) {
             peer.destroy();
             setPeer(null);
         }
 
-        // Reset states
         setViewers(0);
         setRoomId("");
 
