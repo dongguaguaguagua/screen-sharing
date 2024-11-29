@@ -4,70 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Maximize2, Minimize2, Users } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Peer from "peerjs";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export default function JoinPage() {
     const router = useRouter();
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
-    const [isFullscreen, setIsFullscreen] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast();
-
-    useEffect(() => {
-        const handleFullscreenChange = () => {
-            const isFullscreenNow = !!(document.fullscreenElement || (document as any).webkitFullscreenElement || (document as any).mozFullScreenElement || (document as any).msFullscreenElement);
-            setIsFullscreen(isFullscreenNow);
-        };
-
-        document.addEventListener("fullscreenchange", handleFullscreenChange);
-        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
-        document.addEventListener("mozfullscreenchange", handleFullscreenChange);
-        document.addEventListener("MSFullscreenChange", handleFullscreenChange);
-
-        return () => {
-            document.removeEventListener("fullscreenchange", handleFullscreenChange);
-            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
-            document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
-            document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
-        };
-    }, []);
-
-    const toggleFullscreen = async () => {
-        if (!videoContainerRef.current) return;
-
-        try {
-            if (!isFullscreen) {
-                if (videoContainerRef.current.requestFullscreen) {
-                    await videoContainerRef.current.requestFullscreen();
-                } else if ((videoContainerRef.current as any).webkitRequestFullscreen) {
-                    await (videoContainerRef.current as any).webkitRequestFullscreen();
-                } else if ((videoContainerRef.current as any).msRequestFullscreen) {
-                    await (videoContainerRef.current as any).msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    await document.exitFullscreen();
-                } else if ((document as any).webkitExitFullscreen) {
-                    await (document as any).webkitExitFullscreen();
-                } else if ((document as any).msExitFullscreen) {
-                    await (document as any).msExitFullscreen();
-                }
-            }
-        } catch (err) {
-            console.error("Fullscreen error:", err);
-            toast({
-                title: "Fullscreen error",
-                description: "Could not toggle fullscreen mode",
-                variant: "destructive"
-            });
-        }
-    };
 
     const joinRoom = () => {
         if (!roomId.trim()) {
@@ -152,10 +101,7 @@ export default function JoinPage() {
                         ) : (
                             <div className="space-y-4">
                                 <div ref={videoContainerRef} className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group">
-                                    <video ref={videoRef} className="w-full h-full object-contain" autoPlay playsInline />
-                                    <Button variant="secondary" size="icon" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" onClick={toggleFullscreen}>
-                                        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                                    </Button>
+                                    <video ref={videoRef} className="w-full h-full object-contain" autoPlay playsInline controls />
                                 </div>
                             </div>
                         )}
