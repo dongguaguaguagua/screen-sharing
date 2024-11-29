@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Copy, Monitor, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,8 +37,10 @@ export default function HostPage() {
                 toast({
                     title: "New viewer connected",
                     description: "Click to start sharing your screen",
+                    duration: Infinity,
                     action: (
-                        <Button
+                        <ToastAction
+                            altText="Start sharing"
                             onClick={async () => {
                                 try {
                                     const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -60,7 +63,7 @@ export default function HostPage() {
                                 }
                             }}>
                             Start Sharing
-                        </Button>
+                        </ToastAction>
                     )
                 });
             });
