@@ -2,6 +2,12 @@
 
 A real-time screen sharing application built with Next.js, WebRTC, and PeerJS. Create or join rooms to share your screen with others instantly.
 
+## 🚦 Run 
+
+```bash
+docker run -p 3000:3000 -d --name screen-share ghcr.io/tonghohin/screen-share
+```
+
 ## 🚀 Features
 
 -   Real-time screen sharing
