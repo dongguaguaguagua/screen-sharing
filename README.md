@@ -27,6 +27,11 @@ First, clone the repository:
 
 ```bash
 git clone https://github.com/tonghohin/screen-sharing.git
+```
+
+Navigate to the project directory:
+
+```bash
 cd screen-sharing
 ```
 
@@ -65,6 +70,10 @@ You can self-host this application using Docker:
 ```bash
 docker run -p 3000:3000 -d --name screen-sharing ghcr.io/tonghohin/screen-sharing
 ```
+
+## 👥 Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
 
 ## 📄 License
 
