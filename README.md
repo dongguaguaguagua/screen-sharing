@@ -4,22 +4,35 @@ A real-time screen sharing application built with Next.js, WebRTC, and PeerJS. C
 
 ## ✨ Features
 
--   Real-time screen sharing
--   Room-based sharing system
--   Cross-browser support
--   Simple and intuitive interface
+- Real-time screen sharing
+- Room-based sharing system
+- Cross-browser support
+- Simple and intuitive interface
 
 ## 📱 Device Support
 
--   **Hosting**: Desktop/laptop browsers only
--   **Viewing**: Works on all devices (desktop, tablet, mobile)
+- **Hosting**: Desktop/laptop browsers only
+- **Viewing**: Works on all devices (desktop, tablet, mobile)
+
+## 🌐 Browser Support
+
+| Browser             | Screen Sharing | Audio Sharing                |
+| ------------------- | -------------- | ---------------------------- |
+| **Google Chrome**   | ✅             | ✅ (Only when sharing a tab) |
+| **Microsoft Edge**  | ✅             | ✅ (Only when sharing a tab) |
+| **Mozilla Firefox** | ✅             | ❌                           |
+| **Apple Safari**    | ✅             | ❌                           |
+
+### Important Notes
+
+- For audio sharing to work, users have to select the **tab option** when sharing in **Google Chrome** or **Microsoft Edge**.
 
 ## 🛠️ Built With
 
--   [Next.js](https://nextjs.org/) - React framework
--   [PeerJS](https://peerjs.com/) - WebRTC abstraction
--   [Tailwind CSS](https://tailwindcss.com/) - Styling
--   [shadcn/ui](https://ui.shadcn.com/) - UI components
+- [Next.js](https://nextjs.org/) - React framework
+- [PeerJS](https://peerjs.com/) - WebRTC abstraction
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
 
 ## 🚀 Getting Started
 
