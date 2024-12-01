@@ -2,13 +2,7 @@
 
 A real-time screen sharing application built with Next.js, WebRTC, and PeerJS. Create or join rooms to share your screen with others instantly.
 
-## 🚦 Run 
-
-```bash
-docker run -p 3000:3000 -d --name screen-share ghcr.io/tonghohin/screen-share
-```
-
-## 🚀 Features
+## ✨ Features
 
 -   Real-time screen sharing
 -   Room-based sharing system
@@ -27,9 +21,51 @@ docker run -p 3000:3000 -d --name screen-share ghcr.io/tonghohin/screen-share
 -   [Tailwind CSS](https://tailwindcss.com/) - Styling
 -   [shadcn/ui](https://ui.shadcn.com/) - UI components
 
-## 🔧 Development Tools
+## 🚀 Getting Started
 
-This project was developed using:
+First, clone the repository:
 
--   [Bolt.new](https://bolt.new) - Cloud development environment
--   [Cursor](https://cursor.sh/) - AI-powered code editor
+```bash
+git clone https://github.com/tonghohin/screen-sharing.git
+cd screen-sharing
+```
+
+### Using npm
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+### Using Docker
+
+Start the development container:
+
+```bash
+docker compose up
+```
+
+## 📦 Deployment
+
+### Cloud Platform
+
+This application can be deployed on any cloud platform that supports static site hosting.
+
+### Self Hosting
+
+You can self-host this application using Docker:
+
+```bash
+docker run -p 3000:3000 -d --name screen-sharing ghcr.io/tonghohin/screen-sharing
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
