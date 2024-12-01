@@ -1,0 +1,12 @@
+services:
+  screen-share:
+    build: .
+    container_name: screen-share
+    command : ["npx", "serve", "."]
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
