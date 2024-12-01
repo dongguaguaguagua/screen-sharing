@@ -74,7 +74,7 @@ export default function HostPage() {
         } catch (error) {
             console.error("Error initializing peer:", error);
         }
-    }, []);
+    }, [toast]);
 
     const copyRoomId = () => {
         navigator.clipboard.writeText(roomId);

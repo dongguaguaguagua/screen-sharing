@@ -1,5 +1,5 @@
 {
-    "name": "sharing-your-screen",
+    "name": "share-your-screen",
     "version": "0.1.0",
     "description": "A real-time screen sharing application allowing users to easily share their screen with others with a simple code.",
     "license": "MIT",
@@ -7,7 +7,11 @@
         "dev": "next dev --turbopack",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "next lint",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint-staged": "lint-staged",
+        "prepare": "husky"
     },
     "dependencies": {
         "@radix-ui/react-slot": "^1.1.0",
@@ -29,7 +33,12 @@
         "autoprefixer": "10.4.15",
         "eslint": "^9.15.0",
         "eslint-config-next": "15.0.3",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.2.10",
         "postcss": "8.4.30",
+        "prettier": "^3.4.1",
         "tailwindcss": "^3.4.15",
         "typescript": "5.2.2"
     },
