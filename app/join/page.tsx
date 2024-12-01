@@ -56,6 +56,7 @@ export default function JoinPage() {
             conn.on("close", () => {
                 setIsConnecting(false);
                 setIsConnected(false);
+                setRoomId("");
                 toast({
                     title: "Disconnected",
                     description: "The host has ended the session",

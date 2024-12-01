@@ -121,7 +121,7 @@ export default function HostPage() {
                             <Monitor className="h-6 w-6" />
                             Your Screen Sharing Room
                         </CardTitle>
-                        <CardDescription>Share this room code with others to let them view your screen</CardDescription>
+                        <CardDescription>Share this room code with others to let them view your screen. To share audio as well, ensure you're using Chrome or Edge, and select the option to share a tab.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="flex items-center gap-4">
