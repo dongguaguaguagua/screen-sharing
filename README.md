@@ -81,7 +81,7 @@ This application can be deployed on any cloud platform that supports static site
 You can self-host this application using Docker:
 
 ```bash
-docker run -p 3000:3000 -d --name screen-sharing ghcr.io/tonghohin/screen-sharing
+docker run -p 3000:3000 -d --name screen-sharing ghcr.io/tonghohin/screen-sharing:latest
 ```
 
 ## 👥 Contributing
