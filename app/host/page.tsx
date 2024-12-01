@@ -19,7 +19,7 @@ export default function HostPage() {
 
     useEffect(() => {
         try {
-            const newPeer = new Peer();
+            const newPeer = new Peer({ debug: 2 });
 
             setPeer(newPeer);
 

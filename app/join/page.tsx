@@ -30,7 +30,7 @@ export default function JoinPage() {
 
         setIsConnecting(true);
 
-        const peer = new Peer();
+        const peer = new Peer({ debug: 2 });
 
         peer.on("open", () => {
             const conn = peer.connect(roomId);
