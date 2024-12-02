@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Users } from "lucide-react";
 import Link from "next/link";
 import Peer from "peerjs";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function JoinPage() {
     const [roomId, setRoomId] = useState("");
@@ -15,13 +15,23 @@ export default function JoinPage() {
     const [isConnected, setIsConnected] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
     const videoContainerRef = useRef<HTMLDivElement>(null);
+    const peerRef = useRef<Peer | null>(null);
     const { toast } = useToast();
+
+    useEffect(() => {
+        return () => {
+            if (peerRef.current) {
+                peerRef.current.destroy();
+                peerRef.current = null;
+            }
+        };
+    }, []);
 
     function joinRoom() {
         if (!roomId.trim()) {
             toast({
                 title: "Room code required",
-                description: "Please enter a valid room code",
+                description: "Please enter a valid room code.",
                 variant: "destructive"
             });
             return;
@@ -30,6 +40,7 @@ export default function JoinPage() {
         setIsConnecting(true);
 
         const peer = new Peer({ debug: 2 });
+        peerRef.current = peer;
 
         peer.on("open", () => {
             const connection = peer.connect(roomId);
@@ -58,7 +69,7 @@ export default function JoinPage() {
                 setRoomId("");
                 toast({
                     title: "Disconnected",
-                    description: "The host has ended the session",
+                    description: "The session has been ended.",
                     variant: "destructive"
                 });
             });

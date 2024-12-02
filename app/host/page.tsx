@@ -37,7 +37,7 @@ export default function HostPage() {
 
                 toast({
                     title: "New viewer connected",
-                    description: "Click to start sharing your screen",
+                    description: "Click to start sharing your screen.",
                     duration: Infinity,
                     action: (
                         <ToastAction
