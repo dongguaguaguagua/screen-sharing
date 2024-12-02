@@ -109,7 +109,7 @@ export default function HostPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+        <div className="py-8 px-4">
             <div className="max-w-2xl mx-auto space-y-8">
                 <Button variant="outline" asChild>
                     <Link href="/" className="flex items-center gap-2">

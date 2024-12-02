@@ -18,9 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en">
             <body className={inter.className}>
-                <div className="relative">
+                <main className="flex flex-col justify-between min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                     {children}
-                    <footer className="absolute py-8 bottom-0 left-0 right-0 text-center text-gray-500 text-sm">
+                    <footer className="py-8 px-4 text-center text-gray-500 text-sm">
                         Built by{" "}
                         <Link href="https://tonghohin.vercel.app" className="underline" target="_blank">
                             Hin
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </Link>
                         .
                     </footer>
-                </div>
+                </main>
                 <Clarity />
                 <Toaster />
             </body>
