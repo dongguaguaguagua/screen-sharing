@@ -5,12 +5,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Users } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Peer from "peerjs";
 import { useRef, useState } from "react";
 
 export default function JoinPage() {
-    const router = useRouter();
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -18,7 +17,7 @@ export default function JoinPage() {
     const videoContainerRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast();
 
-    const joinRoom = () => {
+    function joinRoom() {
         if (!roomId.trim()) {
             toast({
                 title: "Room code required",
@@ -33,9 +32,9 @@ export default function JoinPage() {
         const peer = new Peer({ debug: 2 });
 
         peer.on("open", () => {
-            const conn = peer.connect(roomId);
+            const connection = peer.connect(roomId);
 
-            conn.on("open", () => {
+            connection.on("open", () => {
                 setIsConnected(true);
                 toast({
                     title: "Connected!",
@@ -53,7 +52,7 @@ export default function JoinPage() {
                 });
             });
 
-            conn.on("close", () => {
+            connection.on("close", () => {
                 setIsConnecting(false);
                 setIsConnected(false);
                 setRoomId("");
@@ -73,14 +72,16 @@ export default function JoinPage() {
                 variant: "destructive"
             });
         });
-    };
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-2xl mx-auto space-y-8">
-                <Button variant="outline" onClick={() => router.push("/")} className="flex items-center gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Home
+                <Button variant="outline" asChild>
+                    <Link href="/" className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Home
+                    </Link>
                 </Button>
 
                 <Card>

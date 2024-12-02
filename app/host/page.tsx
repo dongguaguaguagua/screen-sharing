@@ -5,14 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Copy, Monitor, Users } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
 
 export default function HostPage() {
-    const [roomId, setRoomId] = useState<string>("");
+    const [roomId, setRoomId] = useState("");
     const [peer, setPeer] = useState<Peer | null>(null);
-    const [viewers, setViewers] = useState<number>(0);
+    const [viewers, setViewers] = useState(0);
     const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
     const { toast } = useToast();
     const router = useRouter();
@@ -27,10 +28,10 @@ export default function HostPage() {
                 setRoomId(id);
             });
 
-            newPeer.on("connection", (conn) => {
+            newPeer.on("connection", (connection) => {
                 setViewers((prev) => prev + 1);
 
-                conn.on("close", () => {
+                connection.on("close", () => {
                     setViewers((prev) => prev - 1);
                 });
 
@@ -48,7 +49,7 @@ export default function HostPage() {
                                         audio: true
                                     });
                                     setActiveStream(stream);
-                                    const call = newPeer.call(conn.peer, stream);
+                                    const call = newPeer.call(connection.peer, stream);
 
                                     stream.getVideoTracks()[0].onended = () => {
                                         call.close();
@@ -77,15 +78,15 @@ export default function HostPage() {
         }
     }, [toast]);
 
-    const copyRoomId = () => {
+    function copyRoomId() {
         navigator.clipboard.writeText(roomId);
         toast({
             title: "Room code copied!",
             description: "Share this code with others to let them join your room."
         });
-    };
+    }
 
-    const endSession = () => {
+    function endSession() {
         if (activeStream) {
             activeStream.getTracks().forEach((track) => track.stop());
             setActiveStream(null);
@@ -105,14 +106,16 @@ export default function HostPage() {
         });
 
         router.push("/");
-    };
+    }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
             <div className="max-w-2xl mx-auto space-y-8">
-                <Button variant="outline" onClick={() => router.push("/")} className="flex items-center gap-2">
-                    <ArrowLeft className="h-4 w-4" />
-                    Back to Home
+                <Button variant="outline" asChild>
+                    <Link href="/" className="flex items-center gap-2">
+                        <ArrowLeft className="h-4 w-4" />
+                        Back to Home
+                    </Link>
                 </Button>
 
                 <Card>
