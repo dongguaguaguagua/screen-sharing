@@ -6,12 +6,10 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Users } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
 
 export default function JoinPage() {
-    const searchParams = useSearchParams();
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -21,7 +19,8 @@ export default function JoinPage() {
     const { toast } = useToast();
 
     useEffect(() => {
-        const roomFromUrl = searchParams.get("room");
+        const params = new URLSearchParams(window.location.search);
+        const roomFromUrl = params.get("room");
         if (roomFromUrl) {
             setRoomId(roomFromUrl);
         }
@@ -32,7 +31,7 @@ export default function JoinPage() {
                 peerRef.current = null;
             }
         };
-    }, [searchParams]);
+    }, []);
 
     function joinRoom(roomIdToJoin: string = roomId) {
         if (!roomIdToJoin.trim()) {
