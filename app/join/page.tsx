@@ -6,10 +6,12 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Users } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
 
 export default function JoinPage() {
+    const searchParams = useSearchParams();
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -19,16 +21,21 @@ export default function JoinPage() {
     const { toast } = useToast();
 
     useEffect(() => {
+        const roomFromUrl = searchParams.get("room");
+        if (roomFromUrl) {
+            setRoomId(roomFromUrl);
+        }
+
         return () => {
             if (peerRef.current) {
                 peerRef.current.destroy();
                 peerRef.current = null;
             }
         };
-    }, []);
+    }, [searchParams]);
 
-    function joinRoom() {
-        if (!roomId.trim()) {
+    function joinRoom(roomIdToJoin: string = roomId) {
+        if (!roomIdToJoin.trim()) {
             toast({
                 title: "Room code required",
                 description: "Please enter a valid room code.",
@@ -43,7 +50,7 @@ export default function JoinPage() {
         peerRef.current = peer;
 
         peer.on("open", () => {
-            const connection = peer.connect(roomId);
+            const connection = peer.connect(roomIdToJoin);
 
             connection.on("open", () => {
                 setIsConnected(true);
@@ -107,7 +114,7 @@ export default function JoinPage() {
                         {!isConnected ? (
                             <div className="space-y-4">
                                 <Input placeholder="Enter room code" value={roomId} onChange={(e) => setRoomId(e.target.value)} disabled={isConnecting} />
-                                <Button className="w-full" onClick={joinRoom} disabled={isConnecting || !roomId.trim()}>
+                                <Button className="w-full" onClick={() => joinRoom()} disabled={isConnecting || !roomId.trim()}>
                                     {isConnecting ? "Connecting..." : "Join Room"}
                                 </Button>
                             </div>

@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Copy, Monitor, Users } from "lucide-react";
+import { ArrowLeft, Monitor, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Peer from "peerjs";
 import { useEffect, useState } from "react";
+import { ShareOptions } from "./_components/ShareOptions";
 
 export default function HostPage() {
     const [roomId, setRoomId] = useState("");
@@ -124,15 +125,10 @@ export default function HostPage() {
                             <Monitor className="h-6 w-6" />
                             Your Screen Sharing Room
                         </CardTitle>
-                        <CardDescription>Share this room code with others to let them view your screen. To share audio as well, ensure you're using Chrome or Edge, and select the option to share a tab.</CardDescription>
+                        <CardDescription>Share your room code or link with others to let them view your screen. To share audio as well, ensure you're using Chrome or Edge, and select the option to share a tab.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="flex items-center gap-4">
-                            <code className="flex-1 p-3 bg-gray-100 dark:bg-gray-800 rounded-lg text-lg font-mono">{roomId || "Generating room code..."}</code>
-                            <Button variant="outline" size="icon" onClick={copyRoomId} disabled={!roomId}>
-                                <Copy className="h-4 w-4" />
-                            </Button>
-                        </div>
+                        <ShareOptions roomId={roomId} />
 
                         <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                             <div className="flex items-center gap-2">
