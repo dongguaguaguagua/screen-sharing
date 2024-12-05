@@ -48,33 +48,35 @@ export default function HostPage() {
         if (!peer) return;
 
         if (!activeStream) {
-            toast({
-                title: "New viewer connected",
-                description: "Click to start sharing your screen.",
-                duration: Infinity,
-                action: (
-                    <ToastAction
-                        altText="Start sharing"
-                        onClick={async () => {
-                            try {
-                                const stream = await navigator.mediaDevices.getDisplayMedia({
-                                    video: true,
-                                    audio: true
-                                });
-                                setActiveStream(stream);
-                            } catch (err) {
-                                console.error("Screen sharing error:", err);
-                                toast({
-                                    title: "Screen sharing error",
-                                    description: "Failed to start screen sharing. Please try again.",
-                                    variant: "destructive"
-                                });
-                            }
-                        }}>
-                        Start Sharing
-                    </ToastAction>
-                )
-            });
+            if (connections.length > 0) {
+                toast({
+                    title: "New viewer connected",
+                    description: "Click to start sharing your screen.",
+                    duration: Infinity,
+                    action: (
+                        <ToastAction
+                            altText="Start sharing"
+                            onClick={async () => {
+                                try {
+                                    const stream = await navigator.mediaDevices.getDisplayMedia({
+                                        video: true,
+                                        audio: true
+                                    });
+                                    setActiveStream(stream);
+                                } catch (err) {
+                                    console.error("Screen sharing error:", err);
+                                    toast({
+                                        title: "Screen sharing error",
+                                        description: "Failed to start screen sharing. Please try again.",
+                                        variant: "destructive"
+                                    });
+                                }
+                            }}>
+                            Start Sharing
+                        </ToastAction>
+                    )
+                });
+            }
         } else {
             connections.forEach((connection) => {
                 const call = peer.call(connection, activeStream);
