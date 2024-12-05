@@ -12,9 +12,8 @@ import { useEffect, useRef, useState } from "react";
 export default function JoinPage() {
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
-    const [isConnected, setIsConnected] = useState(false);
+    const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const videoContainerRef = useRef<HTMLDivElement>(null);
     const peerRef = useRef<Peer | null>(null);
     const { toast } = useToast();
 
@@ -32,6 +31,13 @@ export default function JoinPage() {
             }
         };
     }, []);
+
+    useEffect(() => {
+        if (videoRef.current && activeStream) {
+            videoRef.current.srcObject = activeStream;
+            videoRef.current.play().catch(console.error);
+        }
+    }, [activeStream]);
 
     function joinRoom(roomIdToJoin: string = roomId) {
         if (!roomIdToJoin.trim()) {
@@ -52,7 +58,6 @@ export default function JoinPage() {
             const connection = peer.connect(roomIdToJoin);
 
             connection.on("open", () => {
-                setIsConnected(true);
                 toast({
                     title: "Connected!",
                     description: "Waiting for host to share their screen..."
@@ -62,17 +67,14 @@ export default function JoinPage() {
             peer.on("call", (call) => {
                 call.answer();
                 call.on("stream", (remoteStream) => {
-                    if (videoRef.current) {
-                        videoRef.current.srcObject = remoteStream;
-                        videoRef.current.play().catch(console.error);
-                    }
+                    setActiveStream(remoteStream);
                 });
             });
 
             connection.on("close", () => {
                 setIsConnecting(false);
-                setIsConnected(false);
                 setRoomId("");
+                setActiveStream(null);
                 toast({
                     title: "Disconnected",
                     description: "The session has been ended.",
@@ -82,6 +84,7 @@ export default function JoinPage() {
         });
 
         peer.on("error", (err) => {
+            console.error("Peer error:", err);
             setIsConnecting(false);
             toast({
                 title: "Connection failed",
@@ -110,7 +113,7 @@ export default function JoinPage() {
                         <CardDescription>Enter the room code to join and view the shared screen</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {!isConnected ? (
+                        {!activeStream ? (
                             <div className="space-y-4">
                                 <Input placeholder="Enter room code" value={roomId} onChange={(e) => setRoomId(e.target.value)} disabled={isConnecting} />
                                 <Button className="w-full" onClick={() => joinRoom()} disabled={isConnecting || !roomId.trim()}>
@@ -119,8 +122,8 @@ export default function JoinPage() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                <div ref={videoContainerRef} className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group">
-                                    <video ref={videoRef} className="w-full h-full object-contain" autoPlay playsInline controls />
+                                <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden group">
+                                    <video ref={videoRef} className="w-full h-full object-contain" autoPlay playsInline loop controls />
                                 </div>
                             </div>
                         )}
