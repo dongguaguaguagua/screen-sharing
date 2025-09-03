@@ -17,6 +17,13 @@ export default function JoinPage() {
     const videoRef = useRef<HTMLVideoElement>(null);
     const peerRef = useRef<Peer | null>(null);
     const localMicStreamRef = useRef<MediaStream | null>(null); // save local microphone stream
+    const ICE_SERVERS = [
+        { urls: "stun:stun.l.google.com:19302" },
+        // 一个公共的测试 TURN（不建议长期依赖），示例：
+        { urls: "turn:numb.viagenie.ca:3478", username: "webrtc@live.com", credential: "muazkh" }
+        // 或者你自己的 TURN：
+        // { urls: "turn:turn.yourdomain.com:3478", username: "youruser", credential: "yourpass" }
+    ];
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -50,7 +57,11 @@ export default function JoinPage() {
 
         setIsConnecting(true);
 
-        const peer = new Peer({ debug: 2 });
+        const peer = new Peer({
+            debug: 2,
+            config: { iceServers: ICE_SERVERS }
+        });
+
         peerRef.current = peer;
 
         peer.on("open", () => {

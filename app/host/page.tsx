@@ -20,9 +20,24 @@ export default function HostPage() {
     const customRoomId = searchParams.get("room");
     const [isMicOn, setIsMicOn] = useState(true);
 
+    const ICE_SERVERS = [
+        { urls: "stun:stun.l.google.com:19302" },
+        // 一个公共的测试 TURN（不建议长期依赖），示例：
+        { urls: "turn:numb.viagenie.ca:3478", username: "webrtc@live.com", credential: "muazkh" }
+        // 或者你自己的 TURN：
+        // { urls: "turn:turn.yourdomain.com:3478", username: "youruser", credential: "yourpass" }
+    ];
     useEffect(() => {
         try {
-            const newPeer = customRoomId ? new Peer(customRoomId) : new Peer();
+            const newPeer = customRoomId
+                ? new Peer(customRoomId, {
+                      debug: 2,
+                      config: { iceServers: ICE_SERVERS }
+                  })
+                : new Peer({
+                      debug: 2,
+                      config: { iceServers: ICE_SERVERS }
+                  });
             setPeer(newPeer);
 
             newPeer.on("open", (id) => {
