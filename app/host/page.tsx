@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Monitor, Users } from "lucide-react";
+import { ArrowLeft, Monitor, Users, Mic, MicOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Peer from "peerjs";
@@ -18,6 +18,7 @@ export default function HostPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const customRoomId = searchParams.get("room");
+    const [isMicOn, setIsMicOn] = useState(true);
 
     useEffect(() => {
         try {
@@ -63,20 +64,7 @@ export default function HostPage() {
                 duration: Infinity,
                 action: {
                     label: "Start Sharing",
-                    onClick: async () => {
-                        try {
-                            const stream = await navigator.mediaDevices.getDisplayMedia({
-                                video: true,
-                                audio: true
-                            });
-                            setActiveStream(stream);
-                        } catch (err) {
-                            console.error("Screen sharing error:", err);
-                            toast.error("Screen sharing error", {
-                                description: "Failed to start screen sharing. Please try again."
-                            });
-                        }
-                    }
+                    onClick: async () => startSharing()
                 }
             });
         } else if (activeStream) {
@@ -107,6 +95,45 @@ export default function HostPage() {
         router.push("/");
     }
 
+    async function startSharing() {
+        try {
+            // screen
+            const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: true,
+                audio: true
+            });
+            // microphone
+            const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            // combine channels
+            const combinedStream = new MediaStream([...screenStream.getVideoTracks(), ...screenStream.getAudioTracks(), ...micStream.getAudioTracks()]);
+
+            setActiveStream(combinedStream);
+
+            connections.forEach((connectionId) => {
+                const call = peer!.call(connectionId, combinedStream);
+
+                screenStream.getVideoTracks()[0].onended = () => {
+                    call.close();
+                    combinedStream.getTracks().forEach((t) => t.stop());
+                    setActiveStream(null);
+                };
+            });
+        } catch (err) {
+            console.error("Screen sharing error:", err);
+            toast.error("Screen sharing error", {
+                description: "Failed to start screen sharing. Please try again."
+            });
+        }
+    }
+
+    function toggleMic() {
+        if (!activeStream) return;
+        activeStream.getAudioTracks().forEach((track) => {
+            track.enabled = !track.enabled;
+            setIsMicOn(track.enabled);
+        });
+    }
+
     return (
         <div className="px-4 py-8">
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
@@ -135,9 +162,14 @@ export default function HostPage() {
                             <span className="text-lg font-semibold">{connections.length}</span>
                         </div>
                         {activeStream && (
-                            <Button variant="destructive" onClick={endSession} className="self-end">
-                                Stop sharing
-                            </Button>
+                            <div className="flex gap-2 self-end">
+                                <Button variant="secondary" onClick={toggleMic}>
+                                    {isMicOn ? <Mic /> : <MicOff />}
+                                </Button>
+                                <Button variant="destructive" onClick={endSession}>
+                                    Stop sharing
+                                </Button>
+                            </div>
                         )}
                     </CardContent>
                 </Card>

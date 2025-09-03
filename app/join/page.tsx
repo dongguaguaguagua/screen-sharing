@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Users, Mic, MicOff } from "lucide-react";
 import Link from "next/link";
 import Peer from "peerjs";
 import { useEffect, useRef, useState } from "react";
@@ -13,8 +13,10 @@ export default function JoinPage() {
     const [roomId, setRoomId] = useState("");
     const [isConnecting, setIsConnecting] = useState(false);
     const [activeStream, setActiveStream] = useState<MediaStream | null>(null);
+    const [isMicOn, setIsMicOn] = useState(true); // microphone state
     const videoRef = useRef<HTMLVideoElement>(null);
     const peerRef = useRef<Peer | null>(null);
+    const localMicStreamRef = useRef<MediaStream | null>(null); // save local microphone stream
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -60,11 +62,20 @@ export default function JoinPage() {
                 });
             });
 
-            peer.on("call", (call) => {
-                call.answer();
-                call.on("stream", (remoteStream) => {
-                    setActiveStream(remoteStream);
-                });
+            peer.on("call", async (call) => {
+                try {
+                    const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    localMicStreamRef.current = micStream;
+                    setIsMicOn(true);
+
+                    call.answer(micStream);
+
+                    call.on("stream", (remoteStream) => {
+                        setActiveStream(remoteStream);
+                    });
+                } catch {
+                    call.answer();
+                }
             });
 
             connection.on("close", () => {
@@ -83,6 +94,14 @@ export default function JoinPage() {
             toast.error("Connection failed", {
                 description: "Could not connect to the room. Please check the room code and try again."
             });
+        });
+    }
+
+    function toggleMic() {
+        if (!localMicStreamRef.current) return;
+        localMicStreamRef.current.getAudioTracks().forEach((track) => {
+            track.enabled = !track.enabled;
+            setIsMicOn(track.enabled);
         });
     }
 
@@ -112,8 +131,15 @@ export default function JoinPage() {
                             </Button>
                         </div>
                     ) : (
-                        <div className="relative overflow-hidden rounded-lg">
-                            <video ref={videoRef} className="h-full w-full object-contain" autoPlay playsInline loop controls muted />
+                        <div className="flex flex-col gap-4">
+                            <div className="relative overflow-hidden rounded-lg">
+                                <video ref={videoRef} className="h-full w-full object-contain" autoPlay playsInline loop controls muted />
+                            </div>
+                            <div className="flex gap-2">
+                                <Button variant="secondary" onClick={toggleMic}>
+                                    {isMicOn ? <Mic /> : <MicOff />}
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </CardContent>
